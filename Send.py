@@ -5,7 +5,7 @@ import requests
 import configparser
 
 config = configparser.ConfigParser()
-config.read('smtp.ini')
+config.read('send.ini')
 
 def getDateTimeStr():
     now = datetime.now()
@@ -25,25 +25,26 @@ def email(objet:str, message:str, level:str, destinataire:str):
     mailserver.send_message(msg)
     mailserver.quit()
 
-def ntfy(objet:str,message:str,level:str,canal:str):
-    #
+def ntfy(objet,message,level,canal=None):
+    level = str(level)
     if level == "1":
-        tagsList = ""
-    elif level == "2":
-        tagsList = "heavy_check_mark"
-    elif level == "3":
-        tagsList = "loudspeaker"
-    elif level == "4":
-        tagsList = "warning"
-    elif level == "5":
-        tagsList = "rotating_light"
+        tag = ""
+    if level == "2":
+        tag = "heavy_check_mark"
+    if level == "3":
+        tag = "loudspeaker"
+    if level == "4":
+        tag = "warning"
+    if level == "5":
+        tag = "rotating_light"
+        
     requests.post(
-        canal,
+        "https://ntfy.sh/" + config['ntfy']['script_report'],
         data=f"""{message}
-{getDateTimeStr()}""".encode('utf-8'),
+            {getDateTimeStr()}""".encode('utf-8'),
         headers={
             "Title": objet,
             "Priority": level,
-            "Tags": tagsList
+            "Tags": tag
         }
     )
