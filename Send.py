@@ -13,7 +13,7 @@ def getDateTimeStr():
     return formatted_now
 
 def email(objet:str, message:str, level:str, destinataire:str):
-    msg = MIMEText(message)
+    msg = MIMEText(str(message))
     msg['Subject'] = objet
     msg['From'] = config['smtp']['email']
     msg['To'] = destinataire
@@ -41,7 +41,7 @@ def ntfy(objet,message,level,canal=None):
     requests.post(
         "https://ntfy.sh/" + config['ntfy']['script_report'],
         data=f"""{message}
-            {getDateTimeStr()}""".encode('utf-8'),
+{getDateTimeStr()}""".encode('utf-8'),
         headers={
             "Title": objet,
             "Priority": level,
